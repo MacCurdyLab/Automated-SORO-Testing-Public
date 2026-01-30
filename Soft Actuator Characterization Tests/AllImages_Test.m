@@ -2,10 +2,10 @@ clear; clc; close all
 % ======= START Manual Inputs =======
 
 % String that names the actuator to test
-Actuator = "Gunawardane_T4_85A_4";
+Actuator = "Hainsworth_95A_1";
 
 % maximum pressure for the actuator to test in psi
-max_pressure = 20;
+max_pressure = 30;
 
 % diameter of fiducial stickers in mm
 Marker_Diameter = 6.35; 
@@ -22,9 +22,9 @@ if Actuator == "Hansell_Endo_30A"
 end
 
 % time in seconds that the actuator will be pressurized. 
-step_time = 3; 
+step_time = 1; 
 % time in seconds that a vacuum will be pulled in the actuator.
-vac_time = step_time * 2; 
+vac_time = step_time * 1; 
 
 % ======= END Manual Inputs =======
 
@@ -99,7 +99,7 @@ Horiz_all_meas_pts_exp = cell(length(unique_pres), 1);
 all_horiz_X = zeros(length(Horiz_SortedPoints_cell{1}), length(unique(input_pressures_horiz)), length(unique_angles));
 all_horiz_Y = all_horiz_X;
 
-stop = here
+
 % rotate points from horizontal images to overlap, then find the average of
 % each point along the actuator for each inflation state. 
 for i = 1:length(Horiz_SortedPoints_cell)
@@ -107,7 +107,7 @@ for i = 1:length(Horiz_SortedPoints_cell)
     unique_h_angles = unique(Horiz_angles);
     % gather real point data
     Horiz_pts = PixtoReal(Horiz_SortedPoints_cell{i}, Horiz_pixels_per_mm);
-    
+
     fix((i-1)/length(unique(input_pressures_vert)));
 
     angle = Horiz_angles(i) - pi/4 - abs(2*(unique_h_angles(1)-unique_h_angles(2)))*fix((i-1)/length(unique(input_pressures_vert)));
@@ -129,7 +129,7 @@ for i = 1:length(Horiz_SortedPoints_cell)
         for aa = 1:sz_mean_x(2)
             Horiz_all_est_pts{aa} = [mean_x(:, aa), mean_y(:, aa)];
         end
-    
+
     end
     % store experimental data for bend angle calculations
     Horiz_all_meas_pts_exp{i} = PixtoReal(Horiz_SortedPoints_cell{i}, Horiz_pixels_per_mm);
@@ -139,14 +139,14 @@ disp('FIT FUNCTIONS TO MEASURED ACTUATOR POSITIONS...')
 num_segments = length(Horiz_SortedPoints_cell{1})-1;
 allCurves_Horiz = NaturalCubicSplineFit(Horiz_all_est_pts, num_segments, strcat(Actuator, '_multipose_horizontal_vac') );
 allCurves_Horiz_exp = NaturalCubicSplineFit(Horiz_all_meas_pts_exp, num_segments, strcat(Actuator, '_multipose_horizontal_vac') );
-%% find matrices R and T
-RAYS_ORDER = 4;
-THETA_ORDER = 4;
-[R, T] = FindActuatorMatrices({allCurves_Horiz{1:length(unique(input_pressures_horiz))}}', unique(input_pressures_horiz), RAYS_ORDER, THETA_ORDER);
+%% find matrices M and H
+MAGNITUDE_ORDER = 4;
+HEADING_ORDER = 4;
+[M, H] = FindActuatorMatrices({allCurves_Horiz{1:length(unique(input_pressures_horiz))}}', unique(input_pressures_horiz), MAGNITUDE_ORDER, HEADING_ORDER);
 
-% Save R and T to a .mat file
-RT_location = append(pwd, '\Test Data\' , Actuator, '\MAT Files\', Actuator, '_RT_matrices.mat');
-save(RT_location, 'R', 'T');
+% Save M and H to a .mat file
+MH_location = append(pwd, '\Test Data\' , Actuator, '\MAT Files\', Actuator, '_MH_matrices.mat');
+save(MH_location, 'M', 'H');
 
 %% Generate Sag Surface
 bend_angles_vert = FindBendAngles(VerticalImages, allCurves_Vert, num_segments, input_pressures_vert, 2, true)

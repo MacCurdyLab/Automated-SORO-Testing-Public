@@ -208,7 +208,6 @@ save(strcat(matFileLocation, orientationMatFile, '.mat'), 'ee_angles')
 
 % Next: Horizontal Images
 
-step_time = 3;
 pause(step_time)
 
 extra2 = '_multipose_horizontal_vac';

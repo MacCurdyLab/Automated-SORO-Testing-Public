@@ -5,13 +5,15 @@ clear; clc; close all
 % ======= Manual Inputs =======
 
 % String that names the actuator to test
-Actuator = "Gunawardane_T4_85A_4";
+Actuator = "Hainsworth_95A_1";
 
 % maximum pressure for the actuator to test in psi
-max_pressure = 20;
+max_pressure = 30;
+
+Marker_Diameter = 6.35;
 
 % % List of initial bend angles for the actuator to approach the load cell.
-bend_angles = (15:15:90)*pi/180;
+bend_angles = (15:37.5:90)*pi/180;
 % bend_angles = (10:10:40)*pi/180;
 
 % diameter of fiducial stickers in mm
@@ -69,20 +71,20 @@ close
 
 %% Load R and T matrices
 disp('LOAD ACTUATOR POLAR SPIRAL MODELS...')
-RTstruct = load(append(Actuator, '_RT_matrices.mat'));
-R = RTstruct.R;
-T = RTstruct.T;
+MHstruct = load(append(Actuator, '_MH_matrices.mat'));
+M = MHstruct.M;
+H = MHstruct.H;
 
 sagstruct = load(append(Actuator, '_SagSurface.mat'));
 SagSurface = sagstruct.SagSurface_calib;
 
-%% estimate bend angle to input pressure based on RT model
+%% estimate bend angle to input pressure based on MH model
 % estimate points along actuator for each inflation state
 disp('ESTIMATE DISTAL TANGENT BEND ANGLE BASED ON POLAR SPIRAL MODELS...')
 allCurves_points = cell(length(input_pressures), 1); 
 dimensionless = linspace(0, 1, 100);
 for a = 1:length(allCurves_points)
-    [ray_length_coeff, theta_coeff] = FindPolarCoefficients(input_pressures(a), R, T);
+    [ray_length_coeff, theta_coeff] = FindPolarCoefficients(input_pressures(a), M, H);
     rays = polyval(ray_length_coeff, dimensionless);
     angles = polyval(theta_coeff, dimensionless);
 
@@ -128,7 +130,7 @@ bend_pressures = polyval(BendToPressure, bend_angles);
 % LOAD CELL POSITION 
 cell_x = 18.8*25.4;
 cell_z = 14.5*25.4;
-cell_y = -2.5;
+cell_y = 0;
 
 desired_heading = pi/2;
 
@@ -170,7 +172,7 @@ for k = 1:length(bend_pressures)
         AllData = [];
         tic
         
-        [ray_length_coeff, theta_coeff] = FindPolarCoefficients(bend_pressures(k), R, T);
+        [ray_length_coeff, theta_coeff] = FindPolarCoefficients(bend_pressures(k), M, H);
         rays = polyval(ray_length_coeff, dimensionless);
         angles = polyval(theta_coeff, dimensionless);
 

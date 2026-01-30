@@ -5,9 +5,9 @@ clear; clc; close all
 
 %% actual actuator points
 Marker_Diameter = 6.35;
-Actuators = ["Hainsworth_85A", "Hainsworth_95A", "Hainsworth_Inconsistent_95A", "Hainsworth_Staircase_95A", "Hainsworth_Banded_95A", "Yap_95A", "Keong_95A", "Tawk_85A", "Peele_95A"];
+Actuators = ["Hainsworth_95A_1"];
 
-act_lens = [63, 63, 72, 63, 63, 143.5, 154, 91, 67];
+act_lens = [63];
 
 % Actuators = ["Hansell_Endo_30A"];
 % 

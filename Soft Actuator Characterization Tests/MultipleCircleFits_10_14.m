@@ -5,13 +5,9 @@ clear; clc; close all; format long
 
 %% actual actuator points
 Marker_Diameter = 6.35;
-Actuators = ["Hainsworth_85A", "Hainsworth_95A", "Hainsworth_Inconsistent_95A", "Hainsworth_Staircase_95A", "Hainsworth_Banded_95A", "Yap_95A", "Keong_95A", "Tawk_85A", "Peele_95A", "Wan_85A", "Hansell_Endo_30A"];
+Actuators = ["Hainsworth_95A_1"];
 
-act_lens = [63, 63, 72, 63, 63, 143.5, 154, 91, 67, 29, 70]
-
-Actuators = ["Hansell_Endo_30A"];
-
-act_lens = [70]
+act_lens = [63];
 
 table = []
 all_errs = zeros(length(Actuators), 1);

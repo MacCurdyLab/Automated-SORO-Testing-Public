@@ -23,8 +23,7 @@ function PathsAdded = addSOROpaths()
     % addpath(genpath(pwd)) % add all folders in repository
 
     mainPath = string(pwd);
-
-    helperFunctionTests = append(mainPath, "\FunctionTests");
+;
     genUtility = append(mainPath, "\General Utility");
     notesAndDev = append(mainPath, "\Notes and Development");
     calibImageStorage = append(mainPath, "\Images");
@@ -34,8 +33,7 @@ function PathsAdded = addSOROpaths()
     testData = append(mainPath, "\Test Data");
     
 
-    PathsToAdd = [helperFunctionTests;
-        genUtility;
+    PathsToAdd = [genUtility;
         notesAndDev;
         calibImageStorage;
         SORO_characterization;

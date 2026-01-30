@@ -1,21 +1,20 @@
 %% LoadCell Test
 clear; clc; %close all
-% relies on R and T matrices having been found for actuator
+% relies on M and H matrices having been found for actuator
 
 % ======= Manual Inputs =======
 
 % String that names the actuator to test
-Actuator = "Gunawardane_T4_85A_4";
+Actuator = "Hainsworth_95A_1";
 
 % maximum pressure for the actuator to test in psi
-max_pressure = 20;
+max_pressure = 30;
+
+Marker_Diameter = 6.35;
 
 % % List of initial bend angles for the actuator to approach the load cell.
-bend_angles = (15:15:90)*pi/180;
+bend_angles = (15:37.5:90)*pi/180;
 % bend_angles = (10:10:40)*pi/180;
-
-% diameter of fiducial stickers in mm
-Marker_Diameter = 6.35; 
 
 % Wan actuator has smaller markers than others 
 if Actuator == "Wan_85A" 
@@ -28,9 +27,9 @@ if Actuator == "Hansell_Endo_30A"
 end
 
 % time in seconds that the actuator will be pressurized. 
-step_time = 2; 
+step_time = 1; 
 % time in seconds that a vacuum will be pulled in the actuator.
-vac_time = step_time * 3; 
+vac_time = step_time * 1; 
 
 
 
@@ -57,22 +56,22 @@ movetime = 3;
 MoveToPose(IP, position, eulerangles, movetime)
 close
 
-%% Load R and T matrices
+%% Load M and H matrices
 disp('LOAD ACTUATOR POLAR SPIRAL MODELS...')
-RTstruct = load(append(Actuator, '_RT_matrices.mat'));
-R = RTstruct.R;
-T = RTstruct.T;
+MHstruct = load(append(Actuator, '_MH_matrices.mat'));
+M = MHstruct.M;
+H = MHstruct.H;
 
 sagstruct = load(append(Actuator, '_SagSurface.mat'));
 SagSurface = sagstruct.SagSurface_calib;
 
-%% estimate bend angle to input pressure based on RT model
+%% estimate bend angle to input pressure based on MH model
 disp('ESTIMATE DISTAL TANGENT BEND ANGLE BASED ON POLAR SPIRAL MODELS...')
 % estimate points along actuator for each inflation state
 allCurves_points = cell(length(input_pressures), 1); 
 dimensionless = linspace(0, 1, 100);
 for a = 1:length(allCurves_points)
-    [ray_length_coeff, theta_coeff] = FindPolarCoefficients(input_pressures(a), R, T);
+    [ray_length_coeff, theta_coeff] = FindPolarCoefficients(input_pressures(a), M, H);
     rays = polyval(ray_length_coeff, dimensionless);
     angles = polyval(theta_coeff, dimensionless);
 
@@ -131,7 +130,7 @@ loadCellVoltages2 = cell(length(bend_pressures), 1);
 
 times = cell(length(bend_pressures), 1);
 
-steps = 30;
+steps = 5;
 disp('APPROACH LOAD CELL...')
 for k = 1:length(bend_pressures)
     
@@ -164,7 +163,7 @@ for k = 1:length(bend_pressures)
     ee_deg = ee_angle*180/pi;
 
     % POSITION
-    [ray_length_coeff, theta_coeff] = FindPolarCoefficients(bend_pressures(k), R, T);
+    [ray_length_coeff, theta_coeff] = FindPolarCoefficients(bend_pressures(k), M, H);
     rays = polyval(ray_length_coeff, dimensionless);
     angles = polyval(theta_coeff, dimensionless);
 
