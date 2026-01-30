@@ -16,7 +16,6 @@
 
 # Data collected
 *.csv
-*.mat
 *.tif
 *.gif
 *.fig
