@@ -1,2 +1,2 @@
 # Automated-SORO-Testing-Public
-Public version of the Automated Soft Robotics testing system
+Public version of Automated SORO Testing repo
